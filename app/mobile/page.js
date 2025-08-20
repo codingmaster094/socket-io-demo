@@ -1,27 +1,15 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { io } from "socket.io-client";
+import { useEffect } from "react";
 
-export default function MobilePage({ searchParams }) {
-  const socketRef = useRef(null);
-
+export default function MobilePage() {
   useEffect(() => {
-    const socketInitializer = async () => {
-      await fetch("/api/socket");
-      socketRef.current = io({ path: "/api/socket" });
-
-      socketRef.current.on("connect", () => {
-        console.log("📱 Mobile connected");
-        socketRef.current.emit(
-          "mobileResponse",
-          `Hello from mobile at ${new Date().toLocaleTimeString()}`
-        );
-      });
-    };
-    socketInitializer();
-
-    return () => socketRef.current?.disconnect();
+    // Send message to server on load
+    fetch("/api/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: "Hello from Mobile!" }),
+    });
   }, []);
 
   return (
